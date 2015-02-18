@@ -10,111 +10,133 @@
 #include <stack>
 
 using namespace std;
+
+//globally used lambda and mu
 extern float mu, lambda;
 
-int BUFFER_INF = 0;
-unsigned int BUFFER_MAX = 0;
 
 int main(int argc, _TCHAR* argv[])
 {
+	//Expiremental values
 	mu = 1;
-	char input;
 	float lambdaArr[7] = { (float).1, (float).25, (float).4, (float).55, (float).65, (float).80, (float).90 };
 	float lamdaArr2[5] = { (float).2, (float).4, (float).6, (float).8, (float).9 };
 	unsigned int buffMax[3] = { 1, 20, 50 };
+
+	int BUFFER_INF = 0;
+	unsigned int BUFFER_MAX = 0;
+
+	//Experimental loop
 	for (int numExp = 0; numExp < 22; numExp++)
 	{
-		if (numExp < 7)
-		{
+		//Set up this run's expiremental values (lambdas, and buffer size)
+		if (numExp < 7){
 			BUFFER_INF = 1;
 			lambda = lambdaArr[numExp];
 		}
-		else
-		{
+		else{
 			BUFFER_INF = 0;
 			lambda = lamdaArr2[(numExp - 7) % 5];
 			BUFFER_MAX = buffMax[(int)((numExp - 7) / 5)];
 		}
 
+		//Initialize variables for simulation
 		srand((unsigned int)time(NULL));
 		double currentTime = 0;
-		double NAT = arrival::generateTimeToNext();
-		double NDT = 0;
+		double NAT = arrival::generateTimeToNext();		//Next Arrival Time
+		double NDT = 0;									//Next Departure Time
 		double downTime = 0.0;
 		double totalSize = 0;
 		int dropped = 0;
 
-		queue<departure> buffer;
+		queue<departure> buffer;	//NOTE: top of buffer is link node
 		list<events> GEL;
 		stack<double> integralCalc;
 
-		while (currentTime < 100000)
+		//Simulation Loop
+		//One event processed per loop. Ends depending on time of last event
+		while (currentTime < 100000)			
 		{
-			if ((NAT < NDT) || buffer.empty()) //Arrival is the next event to occur
+			if ((NAT < NDT) || buffer.empty()) 		//Arrival is the next event to occur
 			{
+				//Advance currentTime to next event
 				currentTime = NAT;
+
+				//Only time server is not busy is if it not currently trying to send a packet
+				//when a new packet arrives. This is detected by checking if the next packet to 
+				//leave happened in the past. Therefore add the difference to the total down time.
 				if (NDT < currentTime)
 					downTime += (currentTime - NDT);
 
-				GEL.push_back(arrival(NAT));		//Adds new arrival with time NAT to GEL
+				GEL.push_back(arrival(currentTime));		//Adds new arrival with time NAT to GEL
 
-				if (!BUFFER_INF && (buffer.size() > BUFFER_MAX))
-				{
+				if (!BUFFER_INF && (buffer.size() > BUFFER_MAX)){ 	//Check if buffer is full
 					dropped++;
 				}
-				else
-				{
+				else{
 					buffer.push(departure());			//Puts new departure on buffer
+					
+					//if the buffer was empty set the new Next Departure Time
 					if (buffer.size() == 1)
-					{
 						NDT = currentTime + buffer.front().getServiceTime();
-					}
-
+					
+					//Add element to integral stack. Pushes to the stack the time when the buffer 
+					//size increases to value equal to elements in the stack.
 					if(buffer.size() > 1)
 						integralCalc.push(currentTime);
-
 				}
+
+				//Generate time for the arrival of next packet
 				NAT = currentTime + arrival::generateTimeToNext();
 			}
-			else //Departure is the next event to occur
+			else 		//Departure is the next event to occur
 			{
+				//Advance currentTime to next event
 				currentTime = NDT;
 
+				//pops the element off integral calculator stack, essentially point when it rose to
+				//a value and subtracts it by the time it drops from a value. this gets us the area
+				//of the time it was at that value.
 				if(!integralCalc.empty()){
 					totalSize += currentTime - integralCalc.top();
 					integralCalc.pop();
 				}
 
-				GEL.push_back(buffer.front());
-				GEL.back().setTimeOE(currentTime);
-				buffer.pop();
+				GEL.push_back(buffer.front()); 		//Add departure event to list of events
+				GEL.back().setTimeOE(currentTime);	//Set the time of the the event to current time
+				buffer.pop();						//remove depature event from link node
+
+				//Set NDT to the time of the NEXT departure (currentTime + serviceTime)
 				if (!buffer.empty())
-					NDT = currentTime + buffer.front().getServiceTime(); //Set NDT to the time of the NEXT departure (currentTime + serviceTime)
+					NDT = currentTime + buffer.front().getServiceTime(); 
 				//cout << "d";
 			}
 			//cout << currentTime << "__" << endl;
 		}
+		//Simluation ended
 
+		//Empty the integral Calculator Stack
 		while(!integralCalc.empty()){
 			totalSize += currentTime - integralCalc.top();
 			integralCalc.pop();
 		}
-		/*while (!GEL.empty())
-		{
-			events * evt = &GEL.front();
-			cout << evt->returnTime() << " ";
-			GEL.pop_front();
-		}*/
 
+		//Calculate Statistics 
 		double meanSize = totalSize / currentTime;
 		double fractionBusy = (downTime / currentTime) * 100;
+
+		//Print Statistics of run
 		cout << endl << "Lambda Value: " << lambda << endl;
 		cout << "Buffer Size: " << BUFFER_MAX << endl;
 		cout << "Downtime: " << fractionBusy << "%" <<endl;
 		cout << "Buffer Mean: " << meanSize << endl;
 		cout << "Dropped packets: " << dropped << endl;
 	}
+	//Expiremetal run ended
 	cout << "Done creating statistics" << endl;
+
+	//Ending Program
+	char input;
 	cin >> input;
 	return 0;
 }

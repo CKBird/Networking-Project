@@ -12,6 +12,8 @@
 using namespace std;
 
 float mu, lambda;
+
+//Extra credit distribution boolean - not yet implemented
 #define extraCredit 0
 
 static int timeToNext;
@@ -37,6 +39,7 @@ arrival::~arrival()
 	//Destructor
 };
 
+//Generates the time to the next arriving packet
 double arrival::generateTimeToNext()
 {
 	if (!extraCredit)
@@ -64,6 +67,7 @@ departure::~departure()
 	//Destructor
 };
 
+//Gerates the service time for particular departure event
 double departure::generateServiceTime()
 {
 	if (!extraCredit)
