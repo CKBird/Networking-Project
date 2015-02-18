@@ -7,6 +7,7 @@
 #include "time.h"
 #include <queue>
 #include <list>
+#include <stack>
 
 using namespace std;
 extern float mu, lambda;
@@ -45,6 +46,8 @@ int main(int argc, _TCHAR* argv[])
 
 		queue<departure> buffer;
 		list<events> GEL;
+		stack<events> integralCalc;
+		
 		while (clock < 100000)
 		{
 			if ((NAT < NDT) || buffer.empty()) //Arrival is the next event to occur
@@ -52,7 +55,9 @@ int main(int argc, _TCHAR* argv[])
 				clock = NAT;
 				if (NDT < clock)
 					downTime += (clock - NDT);
-				totalSize += buffer.size();
+
+
+
 				GEL.push_back(arrival(NAT));		//Adds new arrival with time NAT to GEL
 
 				if (!BUFFER_INF && (buffer.size() > BUFFER_MAX))
