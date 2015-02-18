@@ -56,9 +56,6 @@ int main(int argc, _TCHAR* argv[])
 				if (NDT < clock)
 					downTime += (clock - NDT);
 
-				if(buffer.size() > 1)
-					integralCalc.push(clock);
-
 				GEL.push_back(arrival(NAT));		//Adds new arrival with time NAT to GEL
 
 				if (!BUFFER_INF && (buffer.size() > BUFFER_MAX))
@@ -72,6 +69,10 @@ int main(int argc, _TCHAR* argv[])
 					{
 						NDT = clock + buffer.front().getServiceTime();
 					}
+
+					if(buffer.size() > 1)
+						integralCalc.push(clock);
+
 				}
 				NAT = clock + arrival::generateTimeToNext();
 			}
