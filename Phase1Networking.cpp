@@ -41,13 +41,13 @@ int main(int argc, _TCHAR* argv[])
 		double NAT = arrival::generateTimeToNext();
 		double NDT = 0;
 		double downTime = 0.0;
-		int totalSize = 0;
+		double totalSize = 0;
 		int dropped = 0;
 
 		queue<departure> buffer;
 		list<events> GEL;
-		stack<events> integralCalc;
-		
+		stack<double> integralCalc;
+
 		while (clock < 100000)
 		{
 			if ((NAT < NDT) || buffer.empty()) //Arrival is the next event to occur
@@ -56,7 +56,8 @@ int main(int argc, _TCHAR* argv[])
 				if (NDT < clock)
 					downTime += (clock - NDT);
 
-
+				if(buffer.size() > 1)
+					integralCalc.push(clock);
 
 				GEL.push_back(arrival(NAT));		//Adds new arrival with time NAT to GEL
 
@@ -77,6 +78,12 @@ int main(int argc, _TCHAR* argv[])
 			else //Departure is the next event to occur
 			{
 				clock = NDT;
+
+				if(!integralCalc.empty()){
+					totalSize += clock - integralCalc.top();
+					integralCalc.pop();
+				}
+
 				GEL.push_back(buffer.front());
 				GEL.back().setTimeOE(clock);
 				buffer.pop();
@@ -85,6 +92,11 @@ int main(int argc, _TCHAR* argv[])
 				//cout << "d";
 			}
 			//cout << clock << "__" << endl;
+		}
+
+		while(!integralCalc.empty()){
+			totalSize += clock - integralCalc.top();
+			integralCalc.pop();
 		}
 		/*while (!GEL.empty())
 		{
