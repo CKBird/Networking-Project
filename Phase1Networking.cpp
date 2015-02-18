@@ -37,7 +37,7 @@ int main(int argc, _TCHAR* argv[])
 		}
 
 		srand((unsigned int)time(NULL));
-		double clock = 0;
+		double currentTime = 0;
 		double NAT = arrival::generateTimeToNext();
 		double NDT = 0;
 		double downTime = 0.0;
@@ -48,13 +48,13 @@ int main(int argc, _TCHAR* argv[])
 		list<events> GEL;
 		stack<double> integralCalc;
 
-		while (clock < 100000)
+		while (currentTime < 100000)
 		{
 			if ((NAT < NDT) || buffer.empty()) //Arrival is the next event to occur
 			{
-				clock = NAT;
-				if (NDT < clock)
-					downTime += (clock - NDT);
+				currentTime = NAT;
+				if (NDT < currentTime)
+					downTime += (currentTime - NDT);
 
 				GEL.push_back(arrival(NAT));		//Adds new arrival with time NAT to GEL
 
@@ -67,36 +67,36 @@ int main(int argc, _TCHAR* argv[])
 					buffer.push(departure());			//Puts new departure on buffer
 					if (buffer.size() == 1)
 					{
-						NDT = clock + buffer.front().getServiceTime();
+						NDT = currentTime + buffer.front().getServiceTime();
 					}
 
 					if(buffer.size() > 1)
-						integralCalc.push(clock);
+						integralCalc.push(currentTime);
 
 				}
-				NAT = clock + arrival::generateTimeToNext();
+				NAT = currentTime + arrival::generateTimeToNext();
 			}
 			else //Departure is the next event to occur
 			{
-				clock = NDT;
+				currentTime = NDT;
 
 				if(!integralCalc.empty()){
-					totalSize += clock - integralCalc.top();
+					totalSize += currentTime - integralCalc.top();
 					integralCalc.pop();
 				}
 
 				GEL.push_back(buffer.front());
-				GEL.back().setTimeOE(clock);
+				GEL.back().setTimeOE(currentTime);
 				buffer.pop();
 				if (!buffer.empty())
-					NDT = clock + buffer.front().getServiceTime(); //Set NDT to the time of the NEXT departure (currentTime + serviceTime)
+					NDT = currentTime + buffer.front().getServiceTime(); //Set NDT to the time of the NEXT departure (currentTime + serviceTime)
 				//cout << "d";
 			}
-			//cout << clock << "__" << endl;
+			//cout << currentTime << "__" << endl;
 		}
 
 		while(!integralCalc.empty()){
-			totalSize += clock - integralCalc.top();
+			totalSize += currentTime - integralCalc.top();
 			integralCalc.pop();
 		}
 		/*while (!GEL.empty())
@@ -106,8 +106,8 @@ int main(int argc, _TCHAR* argv[])
 			GEL.pop_front();
 		}*/
 
-		double meanSize = totalSize / clock;
-		double fractionBusy = (downTime / clock) * 100;
+		double meanSize = totalSize / currentTime;
+		double fractionBusy = (downTime / currentTime) * 100;
 		cout << endl << "Lambda Value: " << lambda << endl;
 		cout << "Buffer Size: " << BUFFER_MAX << endl;
 		cout << "Downtime: " << fractionBusy << "%" <<endl;
