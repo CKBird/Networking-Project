@@ -1,4 +1,11 @@
-//events.h
+/*
+ * Networking Project
+ * Phase 1 - Server Emulation
+ * Chris Bird, Blake Tacklind
+ * 
+ * Declaration of event class and sub-class
+ */
+
 #ifndef EVENTS_H
 #define EVENTS_H
 
@@ -9,16 +16,16 @@ using namespace std;
 class events
 {
 public:
-	events();
-	~events();
-	virtual string toString()		{ return "Event"; }
+    events();
+    ~events();
+    virtual string toString()		{ return "Event"; }
 
-	inline double returnTime()		{ return timeOE; }
-	inline void setTimeOE(double time)	{ timeOE = time; }
+    inline double returnTime()		{ return timeOE; }
+    inline void setTimeOE(double time)	{ timeOE = time; }
 private:
 
 protected:
-	double timeOE; 	//Time event occurred
+    double timeOE; 	//Time event occurred
 
 };
 
@@ -26,11 +33,11 @@ protected:
 class arrival : public events 
 {
 public:
-	static double generateTimeToNext(); //Not in source
+    static double generateTimeToNext(); //Not in source
 
-	arrival(double currentTime);
-	~arrival();
-	inline string toString()		{ return "ArrivalEvent"; }
+    arrival(double currentTime);
+    ~arrival();
+    inline string toString()		{ return "ArrivalEvent"; }
 
 private:
 
@@ -42,17 +49,16 @@ protected:
 class departure : public events
 {
 public:
-	departure();
-	~departure();
-	double generateServiceTime();
-	inline double getServiceTime()		{ return serviceTime; }
-	inline string toString()		{ return "DepartureEvent"; }
+    departure();
+    ~departure();
+    double generateServiceTime();
+    inline double getServiceTime()	{ return serviceTime; }
+    inline string toString()		{ return "DepartureEvent"; }
 
 private:
-	double serviceTime;	//Time it takes server to process and send event
+    double serviceTime;	//Time it takes server to process and send event
 
 protected:
-
 
 };
 

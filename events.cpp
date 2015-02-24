@@ -1,4 +1,10 @@
-//events.c
+/*
+ * Networking Project
+ * Phase 1 - Server Emulation
+ * Chris Bird, Blake Tacklind
+ * 
+ * Definition of event class and sub-class
+ */
 
 #include "stdafx.h"
 #include "stdio.h"
@@ -20,68 +26,68 @@ static int timeToNext;
 
 events::events()
 {
-	//Constructor
+  //Constructor
 };
 
 events::~events()
 {
-	//Destructor
+  //Destructor
 };
 
 arrival::arrival(double currentTime)
 {
-	//Constructor
-	timeOE = currentTime;
+  //Constructor
+  timeOE = currentTime;
 };
 
 arrival::~arrival()
 {
-	//Destructor
+  //Destructor
 };
 
 //Generates the time to the next arriving packet
 double arrival::generateTimeToNext()
 {
-	if (!extraCredit)
-	{
-		double u; //w
-		u = (rand() / (RAND_MAX + 1.0));
-		return ((-1 / lambda) * log(1 - u)); //Make sure that we convert from double to int before returning
-	}
-	else
-	{
-		double u; //w
-		u = (rand() / (RAND_MAX + 1.0));
-		return ((-1 / lambda) * log(1 - u)); //Make sure that we convert from double to int before returning
-	}
+  if (!extraCredit)
+  {
+    double u; //w
+    u = (rand() / (RAND_MAX + 1.0));
+    return ((-1 / lambda) * log(1 - u)); //Make sure that we convert from double to int before returning
+  }
+  else
+  {
+    double u; //w
+    u = (rand() / (RAND_MAX + 1.0));
+    return ((-1 / lambda) * log(1 - u)); //Make sure that we convert from double to int before returning
+  }
 }
 
 departure::departure()
 {
-	//Constructor
-	serviceTime = generateServiceTime();
+  //Constructor
+  serviceTime = generateServiceTime();
 };
 
 departure::~departure()
 {
-	//Destructor
+  //Destructor
 };
 
 //Generates the service time for particular departure event
 double departure::generateServiceTime()
 {
-	if (!extraCredit)
-	{
-		//Using Mu to generate service time of CURRENT event
-		double u; //w
-		u = (rand() / (RAND_MAX + 1.0));
-		return ((-1 / mu) * log(1 - u));
-	}
-	else
-	{
-		//Using Mu to generate service time of CURRENT event
-		double u; //w
-		u = (rand() / (RAND_MAX + 1.0));
-		return ((-1 / mu) * log(1 - u));
-	}
+  if (!extraCredit)
+  {
+    //Using Mu to generate service time of CURRENT event
+    double u; //w
+    u = (rand() / (RAND_MAX + 1.0));
+    return ((-1 / mu) * log(1 - u));
+  }
+  else
+  {
+    //Using Mu to generate service time of CURRENT event
+    double u; //w
+    u = (rand() / (RAND_MAX + 1.0));
+    return ((-1 / mu) * log(1 - u));
+  }
 }
