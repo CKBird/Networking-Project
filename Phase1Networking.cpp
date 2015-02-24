@@ -11,7 +11,6 @@
  * and event handling is emulated
  */
 
-#include "stdafx.h"
 #include "events.h"
 #include "stdio.h"
 #include "iostream"
@@ -25,7 +24,7 @@ using namespace std;
 //globally used lambda and mu
 extern float mu, lambda;
 
-int main(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
   //Experimental values
   mu = 1;
