@@ -17,7 +17,7 @@ extern float mu, lambda;
 
 int main(int argc, _TCHAR* argv[])
 {
-	//Expiremental values
+	//Experimental values
 	mu = 1;
 	float lambdaArr[7] = { (float).1, (float).25, (float).4, (float).55, (float).65, (float).80, (float).90 };
 	float lamdaArr2[5] = { (float).2, (float).4, (float).6, (float).8, (float).9 };
@@ -29,7 +29,7 @@ int main(int argc, _TCHAR* argv[])
 	//Experimental loop
 	for (int numExp = 0; numExp < 22; numExp++)
 	{
-		//Set up this run's expiremental values (lambdas, and buffer size)
+		//Set up this run's experimental values (lambdas, and buffer size)
 		if (numExp < 7){
 			BUFFER_INF = 1;
 			lambda = lambdaArr[numExp];
@@ -43,8 +43,8 @@ int main(int argc, _TCHAR* argv[])
 		//Initialize variables for simulation
 		srand((unsigned int)time(NULL));
 		double currentTime = 0;
-		double NAT = arrival::generateTimeToNext();		//Next Arrival Time
-		double NDT = 0;									//Next Departure Time
+		double NAT = arrival::generateTimeToNext();	//Next Arrival Time
+		double NDT = 0;					//Next Departure Time
 		double downTime = 0.0;
 		double totalSize = 0;
 		int dropped = 0;
@@ -57,7 +57,7 @@ int main(int argc, _TCHAR* argv[])
 		//One event processed per loop. Ends depending on time of last event
 		while (currentTime < 100000)			
 		{
-			if ((NAT < NDT) || buffer.empty()) 		//Arrival is the next event to occur
+			if ((NAT < NDT) || buffer.empty()) 	//Arrival is the next event to occur
 			{
 				//Advance currentTime to next event
 				currentTime = NAT;
@@ -74,7 +74,7 @@ int main(int argc, _TCHAR* argv[])
 					dropped++;
 				}
 				else{
-					buffer.push(departure());			//Puts new departure on buffer
+					buffer.push(departure());		//Puts new departure on buffer
 					
 					//if the buffer was empty set the new Next Departure Time
 					if (buffer.size() == 1)
@@ -104,7 +104,7 @@ int main(int argc, _TCHAR* argv[])
 
 				GEL.push_back(buffer.front()); 		//Add departure event to list of events
 				GEL.back().setTimeOE(currentTime);	//Set the time of the the event to current time
-				buffer.pop();						//remove depature event from link node
+				buffer.pop();				//remove departure event from link node
 
 				//Set NDT to the time of the NEXT departure (currentTime + serviceTime)
 				if (!buffer.empty())
@@ -113,7 +113,7 @@ int main(int argc, _TCHAR* argv[])
 			}
 			//cout << currentTime << "__" << endl;
 		}
-		//Simluation ended
+		//Simulation ended
 
 		//Empty the integral Calculator Stack
 		while(!integralCalc.empty()){
@@ -123,21 +123,21 @@ int main(int argc, _TCHAR* argv[])
 
 		//Calculate Statistics 
 		double meanSize = totalSize / currentTime;
-		double fractionBusy = (downTime / currentTime) * 100;
+		double fractionBusy = (downTime / currentTime);// * 100;
 
 		//Print Statistics of run
 		cout << endl << "Lambda Value: " << lambda << endl;
 		cout << "Buffer Size: " << BUFFER_MAX << endl;
-		cout << "Downtime: " << fractionBusy << "%" <<endl;
+		cout << "Downtime: " << fractionBusy <<endl;
 		cout << "Buffer Mean: " << meanSize << endl;
 		cout << "Dropped packets: " << dropped << endl;
 	}
-	//Expiremetal run ended
+	//Experimental run ended
 	cout << "Done creating statistics" << endl;
 
 	//Ending Program
-	char input;
-	cin >> input;
+	//char input;
+	//cin >> input;
 	return 0;
 }
 

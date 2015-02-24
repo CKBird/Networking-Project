@@ -67,7 +67,7 @@ departure::~departure()
 	//Destructor
 };
 
-//Gerates the service time for particular departure event
+//Generates the service time for particular departure event
 double departure::generateServiceTime()
 {
 	if (!extraCredit)
